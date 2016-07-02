@@ -32,7 +32,9 @@ routerApi.get('/', function *(next) {
             blacklist: this.request.origin + '/api/v0/blacklists',
             video_info: this.request.origin + '/api/v0/video/{vid}',
             user_info: this.request.origin + '/api/v0/user/{uid}',
-            user_videos_info: this.request.origin + '/api/v0/user/{uid}/videos'
+            user_videos_info: this.request.origin + '/api/v0/user/{uid}/videos',
+            bangumi_info: this.request.origin + '/api/v0/bangumi/{bangumi id}',
+            bangumi_sponsors: this.request.origin + '/api/v0/bangumi/{bangumi id}/sponsors{?page={page number}&size={page size}}'
         }
     };
 });
@@ -121,6 +123,95 @@ routerApi.get('/bangumi/:id', function *(next) {
             message: e.message
         };
     }
+});
+
+routerApi.get('/bangumi/:id/sponsors', function *(next) {
+    try {
+        let sponsorObj = yield bangumiFetch.sponsors(this.params.id, this.request.query.page, this.request.query.size);
+        this.body = {code: 0,
+            data: sponsorObj
+        };
+    } catch (e) {
+        this.body = {code: 500,
+            message: e.message
+        };
+    }
+});
+
+routerApi.get('/bus', function *(next) {
+    this.body = {
+        code: 0,
+        data: {
+            203: this.request.origin + '/api/v0/bus/203',
+            322: this.request.origin + '/api/v0/bus/322'
+        }
+    };
+});
+
+routerApi.use('/bus/203', function *(next) {
+    this.status = 418;
+    yield next;
+});
+
+routerApi.get('/bus/203', function *(next) {
+    this.body = {
+        code: 203,
+        message: 'I\'m a bus.'
+    };
+});
+
+routerApi.post('/bus/203', function *(next) {
+    this.body = {
+        code: 203,
+        message: 'I\'m a bus, you can\'t copying me.'
+    };
+});
+
+routerApi.put('/bus/203', function *(next) {
+    this.body = {
+        code: 203,
+        message: 'I\'m a bus, you can\'t replace me.'
+    };
+});
+
+routerApi.delete('/bus/203', function *(next) {
+    this.body = {
+        code: 203,
+        message: 'I\'m a bus, you can\'t delete me.'
+    };
+});
+
+routerApi.use('/bus/322', function *(next) {
+    this.status = 418;
+    yield next;
+});
+
+routerApi.get('/bus/322', function *(next) {
+    this.body = {
+        code: 322,
+        message: 'I\'m a bus.'
+    };
+});
+
+routerApi.post('/bus/322', function *(next) {
+    this.body = {
+        code: 322,
+        message: 'I\'m a bus, you can\'t copying me.'
+    };
+});
+
+routerApi.put('/bus/322', function *(next) {
+    this.body = {
+        code: 322,
+        message: 'I\'m a bus, you can\'t replace me.'
+    };
+});
+
+routerApi.delete('/bus/322', function *(next) {
+    this.body = {
+        code: 322,
+        message: 'I\'m a bus, you can\'t delete me.'
+    };
 });
 
 module.exports.main = routerMain;

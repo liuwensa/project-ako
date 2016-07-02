@@ -67,6 +67,11 @@
             <td><code>String</code></td>
           </tr>
           <tr>
+            <td><code>isMultipart</code></td>
+            <td>确定该视频是否为多 P 视频</td>
+            <td><code>Boolean</code></td>
+          </tr>
+          <tr>
             <td><code>uid</code></td>
             <td>视频的发布者 ID ，可用于查询用户信息</td>
             <td><code>Number</code></td>
@@ -106,8 +111,20 @@
             <td>视频的评论数</td>
             <td><code>Number</code></td>
           </tr>
+          <tr>
+            <td><code>tags</code></td>
+            <td>视频的标签</td>
+            <td><code>Array of String</code></td>
+          </tr>
         </tbody>
       </table>
+      <div class="ui tiny warning icon message">
+        <i class="warning sign icon"></i>
+        <div class="content">
+          <span class="header">由于 B 站系统原因，部分视频可能不会被获取</span>
+          <p>由于 B 站内部原因，涉及到“哲学”、“淫梦”、“福利”等的视频不能通过本项目成功访问。<br>另外，若服务器设置在中国大陆以外的地方，还有可能无法访问到 B 站的正版新番。</p>
+        </div>
+      </div>
       <h4 class="ui block header">获取用户信息</h4>
       <p>用户可通过下方地址获得用户信息：</p>
       <pre class="ui secondary segment"><%- serverPath %>/api/v0/user/[用户 ID]</pre>
@@ -293,7 +310,7 @@
         </tbody>
       </table>
       <h4 class="ui block header">获取新番信息</h4>
-      <p>用户可通过下方地址获得视频信息：</p>
+      <p>用户可通过下方地址获得新番信息：</p>
       <pre class="ui secondary segment"><%- serverPath %>/api/v0/bangumi/[新番 ID]</pre>
       <p>例如某用户需要获取<a href="http://bangumi.bilibili.com/anime/5062/">某个新番</a>的信息，可以向下方地址发送请求：</p>
       <pre class="ui secondary segment"><%- serverPath %>/api/v0/bangumi/5062</pre>
@@ -361,6 +378,118 @@
             <td><code>tags</code></td>
             <td>新番标签，受 B 站系统限制最多只能有 3 个</td>
             <td><code>Array of String</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <h4 class="ui block header">获取新番承包信息</h4>
+      <p>用户可通过下方地址获得新番承包信息：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/bangumi/[新番 ID]/sponsors</pre>
+      <p>例如某用户需要获取<a href="http://bangumi.bilibili.com/anime/5062/">某个新番</a>的信息，可以向下方地址发送请求：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/bangumi/5062/sponsors</pre>
+      <p>另外，用户可定义不同页数和每一页能够显示出来的数量：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/bangumi/[新番 ID]/sponsors?page=[页数]&size=[每一页所显示的数量]</pre>
+      <p>它所返回的数据如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>size</code></td>
+            <td>新番承包者人数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>list</code></td>
+            <td>新番承包详细信息</td>
+            <td><code>Array of Object</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>承包者的详细信息如下：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>face</code></td>
+            <td>承包者的用户头像</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>hidden</code></td>
+            <td>承包者的匿名状况，若该值为“ 1 ”，那么该承包者将以匿名用户的身份出现</td>
+            <td><code>String (Number)</code></td>
+          </tr>
+          <tr>
+            <td><code>message</code></td>
+            <td>承包者在承包该新番时的留言</td>
+            <td><code>String</code></td>
+          <tr>
+            <td><code>rank</code></td>
+            <td>承包者在排行榜的名次</td>
+            <td><code>String (Number)</code></td>
+          </tr>
+          <tr>
+            <td><code>uid</code></td>
+            <td>承包者的用户 ID</td>
+            <td><code>String (Number)</code></td>
+          </tr>
+          <tr>
+            <td><code>uname</code></td>
+            <td>承包者的用户名</td>
+            <td><code>String</code></td>
+          </tr>
+          </tr>
+        </tbody>
+      </table>
+      <h4 class="ui block header">错误码</h4>
+      <p>用户在使用 Project Ako 时可能会遇到一些错误，为了让用户和开发者都能更加容易地了解错误类型和原因，我们在系统内定义了一些错误码。</p>
+      <p>目前可用的错误码如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>错误码</th>
+            <th>说明及可能原因</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>0</code></td>
+            <td>无任何错误，正常执行</td>
+          </tr>
+          <tr>
+            <td><code>403</code></td>
+            <td>系统无法访问视频信息，这有可能是因为视频已被删除，或视频处在审核中或需要权限访问的状态。<br>另外，在海外网络中， B 站的正版新番也不能成功访问。</td>
+          </tr>
+          <tr>
+            <td><code>405</code></td>
+            <td>系统无法获取视频的 cid ，这极有可能是因为视频的视频源已经损坏或不受支持。这种类型的错误无法修复，需要视频 UP 主和 Bilibili 管理员配合对视频来源进行修复。</td>
+          </tr>
+          <tr>
+            <td><code>450</code></td>
+            <td>系统在获取视频信息时发现 UP 主被列入系统黑名单，而被停止解析。</td>
+          </tr>
+          <tr>
+            <td><code>205</code></td>
+            <td>系统在向 Bilibili 服务器发送请求后返回空内容。<br>目前此错误码只会在获取用户投稿信息时才会发生，主要原因为用户未上传任何视频。</td>
+          </tr>
+          <tr>
+            <td><code>203</code></td>
+            <td>我是公交车。I'm a bus.<br><span style="background: #000; color: #4CAF50; padding: 2px 5px; font-weight: bold;">水口 &nbsp;<span style="color: #F44336;">203</span>&nbsp; 潼侨</style></td>
+          </tr>
+          <tr>
+            <td><code>322</code></td>
+            <td>我是公交车。I'm a bus.<br><span style="background: #1A237E; color: #FFF; padding: 2px 5px; font-weight: bold;">仲恺龙旗 &nbsp;<span style="color: #F44336;">322</span>&nbsp; 潼侨工业区</style></td>
           </tr>
         </tbody>
       </table>

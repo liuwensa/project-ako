@@ -91,8 +91,28 @@ function *getVideoInformation(vid) {
 
     var replyInfo = JSON.parse(result3.body);
 
-    if (replyInfo.code === 0) {
+    if (replyInfo.code === 0)
         videoObj.reply = replyInfo.data.page.acount;
+    else
+        throw new Error('Get error code ' + replyInfo.code + ' when getting video info');
+
+    var result4 = yield request({
+        url: 'http://api.bilibili.com/x/tag/archive/tags?jsonp=jsonp&aid=' + videoObj.vid + '&nomid=1',
+        headers: {
+            'User-Agent': reference.userAgent
+        }
+    });
+
+    if (result4.statusCode != 200)
+        throw new Error('Get HTTP ' + result4.statusCode + ' error when getting video info');
+
+    var tagInfo = JSON.parse(result4.body);
+
+    if (tagInfo.code === 0) {
+        var tags = [];
+        for (let i = 0; i < tagInfo.data.length; ++i)
+            tags.push(tagInfo.data[i].tag_name);
+        videoObj.tags = tags;
 
         return videoObj;
     } else {

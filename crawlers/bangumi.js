@@ -44,4 +44,38 @@ function *getBangumiInformation(id) {
     return bangumiObj;
 }
 
+function *getBangumiSponsors(id, page, size) {
+    var params = ['season_id=' + id];
+    if (page && page > 0)
+        params.push('page=' + page);
+    if (size && size > 0)
+        params.push('pagesize=' + size);
+    console.log(params);
+
+    var result = yield request({
+        url: 'http://bangumi.bilibili.com/sponsor/rankweb/get_sponsor_total',
+        method: 'POST',
+        headers: {
+            'User-Agent': reference.userAgent
+        },
+        form: params.join('&')
+    });
+
+    if (result.statusCode != 200)
+        throw new Error('Get HTTP ' + result.statusCode + ' error when getting bangumi info');
+
+    var tmpObj = JSON.parse(result.body);
+    var sponsorObj = {};
+
+    if (tmpObj.code === 0) {
+        sponsorObj.size = tmpObj.result.users;
+        sponsorObj.list = tmpObj.result.list;
+
+        return sponsorObj;
+    } else {
+        throw new Error(tmpObj.message);
+    }
+}
+
 module.exports.info = getBangumiInformation;
+module.exports.sponsors = getBangumiSponsors;
