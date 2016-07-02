@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="semantic.min.css" rel="stylesheet" type="text/css">
+  <script src="jquery-2.2.4.min.js"></script>
+  <script src="semantic.min.js"></script>
+  <title>Project Ako</title>
+</head>
+<body>
+  <div class="ui very padded center aligned basic segment">
+    <main class="ui text container">
+      <h1 class="ui header">
+        Project Ako
+        <p class="sub header">Project Television 的 RESTful API 版本 | API 版本 : v0</p>
+      </h1>
+      <div class="ui hidden divider"></div>
+      <h3 class="ui block header">如何使用 Project Ako ？</h3>
+      <p>首先，请访问如下地址获取可以使用的 API 地址：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/</pre>
+      <p>本项目的主要功能入口都会出现在上面的地址里。当然它只会告诉你本项目能干些什么，详细功能使用方法可以在本页里找到。</p>
+      <h4 class="ui block header">获取黑名单信息</h4>
+      <p>本项目内带有黑名单功能，若某位 UP 主拥有过不良记录，那么他将会被记录在本黑名单内。</p>
+      <p>位于黑名单内的用户，其投稿的视频将会被系统自动过滤，停止解析。</p>
+      <p>用户可通过下方地址获得黑名单列表：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/blacklists</pre>
+      <p>黑名单内的每一个条目由“用户 ID + 屏蔽原因”组成。</p>
+      <h4 class="ui block header">获取视频信息</h4>
+      <p>用户可通过下方地址获得视频信息：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/video/[视频 ID (又称 AV 号)]</pre>
+      <p>例如某用户需要获取<a href="http://www.bilibili.com/video/av1145140/">某个视频</a>的信息，可以向下方地址发送请求：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/video/1145140</pre>
+      <p>它所返回的数据如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>vid</code></td>
+            <td>视频的 AV 号（不含 av 前缀）</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>cover</code></td>
+            <td>视频的封面图片地址</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>title</code></td>
+            <td>视频的标题</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>date</code></td>
+            <td>视频的发布日期，以 UNIX 时间戳的方式显示</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>desc</code></td>
+            <td>视频的简介</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>uid</code></td>
+            <td>视频的发布者 ID ，可用于查询用户信息</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>cid</code></td>
+            <td>视频的 cid ， cid 又被称为弹幕池 ID ，可用于获取视频的弹幕池</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>click</code></td>
+            <td>视频的点击量</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>danmaku</code></td>
+            <td>视频的弹幕数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>coin</code></td>
+            <td>视频的硬币数，请勿与新番承包用的 B 币相混淆</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>favourite</code></td>
+            <td>视频的收藏数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>duration</code></td>
+            <td>视频的总长度，此字段在多 P 视频里容易出现问题，请谨慎使用</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>reply</code></td>
+            <td>视频的评论数</td>
+            <td><code>Number</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <h4 class="ui block header">获取用户信息</h4>
+      <p>用户可通过下方地址获得用户信息：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/user/[用户 ID]</pre>
+      <p>例如某用户需要获取某位用户的信息，可以向下方地址发送请求：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/user/75174</pre>
+      <p>它所返回的数据如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>uid</code></td>
+            <td>用户 ID</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>name</code></td>
+            <td>用户昵称</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>avatar</code></td>
+            <td>用户的头像地址</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>description</code></td>
+            <td>用户签名</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>fans</code></td>
+            <td>粉丝数量</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>follows</code></td>
+            <td>用户关注信息<br>此对象中包含了 <code>size</code> 和 <code>list</code> 两个字段，前者表示关注数量，后者列出了关注中的用户的 ID</td>
+            <td><code>Object</code><br><code>size</code> : <code>Number</code><br><code>list</code> : <code>Array of Number</code></td>
+          </tr>
+          <tr>
+            <td><code>regtime</code></td>
+            <td>用户的注册时间，以 UNIX 时间戳的方式显示</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>level</code></td>
+            <td>用户等级</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>birthday</code></td>
+            <td>用户的生日信息</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>place</code></td>
+            <td>用户的现居住地</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>sex</code></td>
+            <td>用户的性别信息，它可以是“男”、“女”或“保密”</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>verification</code></td>
+            <td>用户认证信息<br>此对象中包含了 <code>verified</code> 和 <code>info</code> 两个字段，前者表示该用户是否为认证用户，后者表示认证信息</td>
+            <td><code>Object</code><br><code>verified</code> : <code>Boolean</code><br><code>info</code> : <code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>blacklisted</code></td>
+            <td>若用户被列入系统黑名单，则会出现此字段<br>它表示了用户被列入黑名单的原因</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>tags</code></td>
+            <td>用户的标签</td>
+            <td><code>Array of String</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <h4 class="ui block header">获取用户投稿</h4>
+      <p>用户可通过下方地址获得用户投稿信息：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/user/[用户 ID]/videos</pre>
+      <p>例如某用户需要获取某位用户的信息，可以向下方地址发送请求：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/user/75174/videos</pre>
+      <p>它所返回的数据为数组，数组内的对象数据直接取自 Bilibili 官方格式，如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>aid</code></td>
+            <td>视频的 AV 号（不含 av 前缀）</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>copyright</code></td>
+            <td>视频的版权信息，它可以是“ Original ”或“ Copy ”</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>typeid</code></td>
+            <td>视频所在分区的 ID</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>title</code></td>
+            <td>视频的标题</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>subtitle</code></td>
+            <td>视频的子标题，用途不明</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>play</code></td>
+            <td>视频的播放次数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>review</code></td>
+            <td>视频的评论数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>video_review</code></td>
+            <td>视频的弹幕数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>favourites</code></td>
+            <td>视频的收藏数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>mid</code></td>
+            <td>视频的发布者 ID ，可用于查询用户信息</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>author</code></td>
+            <td>视频的发布者昵称</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>description</code></td>
+            <td>视频的简介</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>created</code></td>
+            <td>视频的发布日期</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>pic</code></td>
+            <td>视频的封面图片地址</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>comment</code></td>
+            <td>视频的弹幕数，与 <code>video_review</code> 重复</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>length</code></td>
+            <td>视频的总长度，此字段在多 P 视频里的行为暂未进行测试，请谨慎使用</td>
+            <td><code>String</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <h4 class="ui block header">获取新番信息</h4>
+      <p>用户可通过下方地址获得视频信息：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/bangumi/[新番 ID]</pre>
+      <p>例如某用户需要获取<a href="http://bangumi.bilibili.com/anime/5062/">某个新番</a>的信息，可以向下方地址发送请求：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/bangumi/5062</pre>
+      <p>它所返回的数据如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>id</code></td>
+            <td>新番的 ID 号</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>title</code></td>
+            <td>新番名称</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>desc</code></td>
+            <td>新番介绍</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>cover</code></td>
+            <td>新番的封面图片地址</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>play</code></td>
+            <td>新番播放量，以相对数字的方式显示<br>目前暂时没有方法获得它的绝对值</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>fans</code></td>
+            <td>新番追番数，以相对数字的方式显示<br>目前暂时没有方法获得它的绝对值</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>danmaku</code></td>
+            <td>新番弹幕数，以相对数字的方式显示<br>目前暂时没有方法获得它的绝对值</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>status</code></td>
+            <td>新番的目前连载状态，完结时显示“已完结”，连载中时会显示每周连载时间<br>该字段可能为空</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>date</code></td>
+            <td>新番上映年月</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>cv</code></td>
+            <td>新番参与声优列表</td>
+            <td><code>Array of String</code></td>
+          </tr>
+          <tr>
+            <td><code>tags</code></td>
+            <td>新番标签，受 B 站系统限制最多只能有 3 个</td>
+            <td><code>Array of String</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+    <footer class="ui vertical footer segment" style="padding: 3em;">
+      <section class="ui center aligned container">
+        <div class="ui horizontal small divided link list">
+          <a class="item" href="https://www.yudachi.biz/">Made by Project YudachiBomber</a>
+        </div>
+      </section>
+    </footer>
+  </div>
+</body>
+</html>
