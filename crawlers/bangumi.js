@@ -50,7 +50,6 @@ function *getBangumiSponsors(id, page, size) {
         params.push('page=' + page);
     if (size && size > 0)
         params.push('pagesize=' + size);
-    console.log(params);
 
     var result = yield request({
         url: 'http://bangumi.bilibili.com/sponsor/rankweb/get_sponsor_total',

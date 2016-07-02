@@ -43,3 +43,5 @@ app.use(routerApi.routes()).use(routerApi.allowedMethods());
  * Listen
  */
 app.listen(8388);
+
+module.exports = app;

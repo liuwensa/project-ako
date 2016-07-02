@@ -115,8 +115,12 @@ function *getVideoInformation(vid) {
         videoObj.tags = tags;
 
         return videoObj;
+    } else if (tagInfo.code === 16006) {
+        videoObj.tags = [];
+
+        return videoObj;
     } else {
-        throw new Error('Get error code ' + replyInfo.code + ' when getting video info');
+        throw new Error('Get error code ' + tagInfo.code + ' when getting video info');
     }
 }
 
