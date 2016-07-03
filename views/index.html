@@ -434,6 +434,7 @@
             <td><code>message</code></td>
             <td>承包者在承包该新番时的留言</td>
             <td><code>String</code></td>
+          </tr>
           <tr>
             <td><code>rank</code></td>
             <td>承包者在排行榜的名次</td>
@@ -449,6 +450,207 @@
             <td>承包者的用户名</td>
             <td><code>String</code></td>
           </tr>
+        </tbody>
+      </table>
+      <h4 class="ui block header">获取兴趣圈圈子信息</h4>
+      <p>用户可通过下方地址获得圈子信息：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/community/[圈子 ID]</pre>
+      <p>例如某用户需要获取<a href="http://www.im9.com/community.html?community_id=1063">某个圈子</a>的信息，可以向下方地址发送请求：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/community/1063</pre>
+      <p>它所返回的数据如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>id</code></td>
+            <td>圈子的 ID 号</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>title</code></td>
+            <td>圈子名称</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>avatar</code></td>
+            <td>圈子的头像地址</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>banner</code></td>
+            <td>圈子的版头背景图地址</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>desc</code></td>
+            <td>圈子简介</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>post</code></td>
+            <td>圈子的帖子数量和别名信息<br>此对象中包含了 <code>count</code> 和 <code>nickname</code> 两个字段，前者表示帖子的数量，后者表示帖子的别名</td>
+            <td><code>Object</code><br><code>count</code> : <code>Number</code><br><code>nickname</code> : <code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>member</code></td>
+            <td>圈子的成员数量和别名信息<br>此对象中包含了 <code>count</code> 和 <code>nickname</code> 两个字段，前者表示成员的数量，后者表示成员的别名</td>
+            <td><code>Object</code><br><code>count</code> : <code>Number</code><br><code>nickname</code> : <code>String</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <h4 class="ui block header">获取兴趣圈圈子内帖子</h4>
+      <p>用户可通过下方地址获得圈子内的帖子信息：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/community/[圈子 ID]/posts</pre>
+      <p>例如某用户需要获取<a href="http://www.im9.com/community.html?community_id=1063">某个圈子</a>内的帖子信息，可以向下方地址发送请求：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/community/1063/posts</pre>
+      <p>另外，用户可定义不同页数：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/community/[圈子 ID]/posts?page=[页数]</pre>
+      <p>它所返回的数据如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>count</code></td>
+            <td>帖子总数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>pages</code></td>
+            <td>帖子列表的总页数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>list</code></td>
+            <td>帖子列表</td>
+            <td><code>Array of Object</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>帖子的详细信息如下：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>id</code></td>
+            <td>帖子 ID</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>title</code></td>
+            <td>帖子标题</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>summary</code></td>
+            <td>帖子的主要内容（非完整内容）</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>created</code></td>
+            <td>帖子发布时间，以 UNIX 时间戳的方式显示</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>top</code></td>
+            <td>帖子是否被置顶</td>
+            <td><code>Boolean</code></td>
+          </tr>
+          <tr>
+            <td><code>link</code></td>
+            <td>帖子链接</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>author</code></td>
+            <td>作者信息</td>
+            <td><code>Object</code></td>
+          </tr>
+          <tr>
+            <td><code>reply</code></td>
+            <td>帖子回复数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>like</code></td>
+            <td>帖子点赞数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>last_reply</code></td>
+            <td>最后回复信息</td>
+            <td><code>Object</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>帖子作者信息如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>name</code></td>
+            <td>作者昵称</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>uid</code></td>
+            <td>作者的用户 ID</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>avatar</code></td>
+            <td>作者的头像地址</td>
+            <td><code>String</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>帖子最后回复信息如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>time</code></td>
+            <td>帖子最后回复时间，以 UNIX 时间戳的方式显示</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>uid</code></td>
+            <td>最后回复者的用户 ID</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>username</code></td>
+            <td>最后回复者的昵称</td>
+            <td><code>String</code></td>
           </tr>
         </tbody>
       </table>
@@ -482,6 +684,10 @@
           <tr>
             <td><code>205</code></td>
             <td>系统在向 Bilibili 服务器发送请求后返回空内容。<br>目前此错误码只会在获取用户投稿信息时才会发生，主要原因为用户未上传任何视频。</td>
+          </tr>
+          <tr>
+            <td><code>500</code></td>
+            <td>系统在执行操作时发生了异常，错误原因可在 <code>message</code> 字段中找到。</td>
           </tr>
           <tr>
             <td><code>203</code></td>

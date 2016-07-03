@@ -7,6 +7,7 @@ const render = require('./render');
 const videoFetch = require('./crawlers/video');
 const userFetch = require('./crawlers/user');
 const bangumiFetch = require('./crawlers/bangumi');
+const communityFetch = require('./crawlers/community');
 
 const exceptions = require('./exceptions/');
 const reference = require('./reference');
@@ -34,7 +35,9 @@ routerApi.get('/', function *(next) {
             user_info: this.request.origin + '/api/v0/user/{uid}',
             user_videos_info: this.request.origin + '/api/v0/user/{uid}/videos',
             bangumi_info: this.request.origin + '/api/v0/bangumi/{bangumi id}',
-            bangumi_sponsors: this.request.origin + '/api/v0/bangumi/{bangumi id}/sponsors{?page={page number}&size={page size}}'
+            bangumi_sponsors: this.request.origin + '/api/v0/bangumi/{bangumi id}/sponsors{?page={page number}&size={page size}}',
+            community_info: this.request.origin + '/api/v0/community/{community id}',
+            community_posts: this.request.origin + '/api/v0/community/{community id}/posts{?page={page number}}'
         }
     };
 });
@@ -130,6 +133,32 @@ routerApi.get('/bangumi/:id/sponsors', function *(next) {
         let sponsorObj = yield bangumiFetch.sponsors(this.params.id, this.request.query.page, this.request.query.size);
         this.body = {code: 0,
             data: sponsorObj
+        };
+    } catch (e) {
+        this.body = {code: 500,
+            message: e.message
+        };
+    }
+});
+
+routerApi.get('/community/:id', function *(next) {
+    try {
+        let commObj = yield communityFetch.info(this.params.id);
+        this.body = {code: 0,
+            data: commObj
+        };
+    } catch (e) {
+        this.body = {code: 500,
+            message: e.message
+        };
+    }
+});
+
+routerApi.get('/community/:id/posts', function *(next) {
+    try {
+        let commObj = yield communityFetch.posts(this.params.id, (this.request.query.page || 1));
+        this.body = {code: 0,
+            data: commObj
         };
     } catch (e) {
         this.body = {code: 500,
