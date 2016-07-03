@@ -6,10 +6,12 @@ const request = require('supertest').agent(app.listen());
 describe('Project Ako Tests', function() {
     this.timeout(30000);
 
+    /* Main Site */
     it('200 to /', function(done) {
         request.get('/').expect(200, done);
     });
 
+    /* API */
     it('API Links is OK', function(done) {
         request.get('/api/v0/').expect(200).end(function(err, res) {
             if (err) return done(err);
@@ -17,6 +19,7 @@ describe('Project Ako Tests', function() {
         });
     });
 
+    /* Blacklist */
     it('Blacklists is OK', function(done) {
         request.get('/api/v0/blacklists').expect(200).end(function(err, res) {
             if (err) return done(err);
@@ -24,6 +27,7 @@ describe('Project Ako Tests', function() {
         });
     });
 
+    /* Video */
     it('Successfully getting video information', function(done) {
         request.get('/api/v0/video/1547469').expect(200).end(function(err, res) {
             if (err) return done(err);
@@ -76,6 +80,7 @@ describe('Project Ako Tests', function() {
         });
     });
 
+    /* User */
     it('Successfully getting user information', function(done) {
         request.get('/api/v0/user/4238316').expect(200).end(function(err, res) {
             if (err) return done(err);
@@ -83,8 +88,22 @@ describe('Project Ako Tests', function() {
         });
     });
 
-    it('Failed getting user information when uid is invaild', function(done) {
+    it('Successfully getting user information with blacklist', function(done) {
+        request.get('/api/v0/user/5518224').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.blacklisted) return done();
+        });
+    });
+
+    it('Failed getting user information when user not found', function(done) {
         request.get('/api/v0/user/0').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 500) return done();
+        });
+    });
+
+    it('Failed getting user information when uid is invaild', function(done) {
+        request.get('/api/v0/user/somebody').expect(200).end(function(err, res) {
             if (err) return done(err);
             if (res.body.code === 500) return done();
         });
@@ -104,13 +123,21 @@ describe('Project Ako Tests', function() {
         });
     });
 
-    it('Failed getting user videos information when uid is invaild', function(done) {
+    it('Failed getting user videos information when user not found', function(done) {
         request.get('/api/v0/user/0/videos').expect(200).end(function(err, res) {
             if (err) return done(err);
             if (res.body.code === 500) return done();
         });
     });
 
+    it('Failed getting user videos information when uid is invaild', function(done) {
+        request.get('/api/v0/user/somebody/videos').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 500) return done();
+        });
+    });
+
+    /* Bangumi */
     it('Successfully getting bangumi information', function(done) {
         request.get('/api/v0/bangumi/2600').expect(200).end(function(err, res) {
             if (err) return done(err);
@@ -167,6 +194,64 @@ describe('Project Ako Tests', function() {
         });
     });
 
+    /* Community */
+    it('Successfully getting community information', function(done) {
+        request.get('/api/v0/community/1063').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.id === 1063 && res.body.data.name === '东条希') return done();
+        });
+    });
+
+    it('Failed getting community information when community not found', function(done) {
+        request.get('/api/v0/community/0').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 500 && res.body.message === '目前尚未有该圈子') return done();
+        });
+    });
+
+    it('Failed getting community information when id is invaild', function(done) {
+        request.get('/api/v0/community/test').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 500 && res.body.message === '请求参数存在问题') return done();
+        });
+    });
+
+    it('Successfully getting community posts', function(done) {
+        request.get('/api/v0/community/1063/posts').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.count > -1 && res.body.data.pages > 0) return done();
+        });
+    });
+
+    it('Successfully getting community posts (with pages)', function(done) {
+        request.get('/api/v0/community/1063/posts?page=2').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.count > -1 && res.body.data.pages > 0) return done();
+        });
+    });
+
+    it('Successfully getting community posts (with pages, empty)', function(done) {
+        request.get('/api/v0/community/1063/posts?page=666').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.list.length === 0) return done();
+        });
+    });
+
+    it('Failed getting community posts when community not found', function(done) {
+        request.get('/api/v0/community/0/posts').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 500 && res.body.message === '目前尚未有该圈子') return done();
+        });
+    });
+
+    it('Failed getting community posts when id is invaild', function(done) {
+        request.get('/api/v0/community/test/posts').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 500 && res.body.message === '请求参数存在问题') return done();
+        });
+    });
+
+    /* 203 Bus */
     it('So... I want to take 203 bus.', function(done) {
         request.get('/api/v0/bus/203').expect(418).end(function(err, res) {
             if (err) return done(err);
