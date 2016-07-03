@@ -3,11 +3,11 @@
 
 ```json
 {
-  'code': 0,
-  'data': {
-    'name': 'Project Ako',
-    'description': 'Showing bilibili videos, users and bangumis using JSON',
-    'written_in': ['Node.js', 'Koa']
+  "code": 0,
+  "data": {
+    "name": "Project Ako",
+    "description": "Showing bilibili videos, users and bangumis using JSON",
+    "written_in": ["Node.js", "Koa"]
   }
 }
 ```
