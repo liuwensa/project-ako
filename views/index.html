@@ -309,6 +309,40 @@
           </tr>
         </tbody>
       </table>
+      <h4 class="ui block header">获取用户关注的新番信息</h4>
+      <p>用户可通过下方地址获得用户所关注的新番信息：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/user/[用户 ID]/bangumis</pre>
+      <p>例如某用户需要获取某位用户所关注的新番的信息，可以向下方地址发送请求：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/user/2/bangumis</pre>
+      <p>另外，用户可定义不同页数：</p>
+      <pre class="ui secondary segment"><%- serverPath %>/api/v0/user/2/bangumis?page=[页数]</pre>
+      <p>它所返回的数据如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>count</code></td>
+            <td>关注中的新番数量</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>pages</code></td>
+            <td>总页数</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>list</code></td>
+            <td>关注中的新番列表，由于一些原因暂时仅储存新番 ID 。</td>
+            <td><code>Array of Number</code></td>
+          </tr>
+        </tbody>
+      </table>
       <h4 class="ui block header">获取新番信息</h4>
       <p>用户可通过下方地址获得新番信息：</p>
       <pre class="ui secondary segment"><%- serverPath %>/api/v0/bangumi/[新番 ID]</pre>
@@ -502,6 +536,66 @@
             <td>圈子的成员数量和别名信息<br>此对象中包含了 <code>count</code> 和 <code>nickname</code> 两个字段，前者表示成员的数量，后者表示成员的别名</td>
             <td><code>Object</code><br><code>count</code> : <code>Number</code><br><code>nickname</code> : <code>String</code></td>
           </tr>
+          <tr>
+            <td><code>admin</code></td>
+            <td>圈子的管理组信息</td>
+            <td><code>Object</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>圈子的管理组信息中有两个字段，分别为 <code>admins</code> 和 <code>roles</code> ，它们都是存储对象的数组，前者表示管理员列表，后者表示管理组的角色。</p>
+      <p>管理员信息如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>username</code></td>
+            <td>管理员的用户名</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>uid</code></td>
+            <td>管理员的用户 ID</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>avatar</code></td>
+            <td>管理员的用户头像地址</td>
+            <td><code>String</code></td>
+          </tr>
+          <tr>
+            <td><code>role</code></td>
+            <td>管理员的角色 ID ，不同的角色信息会出现在管理组信息的 <code>roles</code> 字段中</td>
+            <td><code>Number</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>角色信息如下表所示：</p>
+      <table class="ui table">
+        <thead>
+          <tr>
+            <th>字段名</th>
+            <th>说明</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>id</code></td>
+            <td>角色组 ID</td>
+            <td><code>Number</code></td>
+          </tr>
+          <tr>
+            <td><code>name</code></td>
+            <td>角色组名称</td>
+            <td><code>String</code></td>
+          </tr>
         </tbody>
       </table>
       <h4 class="ui block header">获取兴趣圈圈子内帖子</h4>
@@ -676,6 +770,10 @@
           <tr>
             <td><code>405</code></td>
             <td>系统无法获取视频的 cid ，这极有可能是因为视频的视频源已经损坏或不受支持。这种类型的错误无法修复，需要视频 UP 主和 Bilibili 管理员配合对视频来源进行修复。</td>
+          </tr>
+          <tr>
+            <td><code>406</code></td>
+            <td>请求页数有误，页数不能是负数或零。<a href="https://github.com/DoraJDJ/project-ako/issues/2">虽然 Bilibili 系统允许负页数的存在，但这可能会出现不可预料的问题。</a></td>
           </tr>
           <tr>
             <td><code>450</code></td>

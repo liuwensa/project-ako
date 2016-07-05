@@ -3,6 +3,7 @@
 const request = require('co-request');
 const cheerio = require('cheerio');
 
+const exceptions = require('../exceptions/');
 const reference = require('../reference');
 
 function *getBangumiInformation(id) {
@@ -45,6 +46,9 @@ function *getBangumiInformation(id) {
 }
 
 function *getBangumiSponsors(id, page, size) {
+    if (page && page < 1)
+        throw new exceptions.InvaildPageException();
+
     var params = ['season_id=' + id];
     if (page && page > 0)
         params.push('page=' + page);

@@ -2,6 +2,7 @@
 
 const request = require('co-request');
 
+const exceptions = require('../exceptions/');
 const reference = require('../reference');
 
 function *getCommunityInformation(id) {
@@ -26,6 +27,7 @@ function *getCommunityInformation(id) {
         commObj.desc = tmp.data.desc;
         commObj.post = {count: tmp.data.post_count, nickname: tmp.data.post_nickname};
         commObj.member = {count: tmp.data.member_count, nickname: tmp.data.member_nickname};
+        commObj.admin = yield getCommunityAdmins(id);
 
         return commObj;
     } else {
@@ -35,7 +37,7 @@ function *getCommunityInformation(id) {
 
 function *getCommunityPosts(id, page) {
     if (page && page < 1)
-        throw new Error('Page number is invaild');
+        throw new exceptions.InvaildPageException();
 
     var result = yield request({
         url: 'http://www.im9.com/api/query.community.post.list.do?page_no=' + page + '&community_id=' + id + '&sort_type=1&captcha=1c45ca043b7a5ac607a75b2eb9af81fa&ts=' + Date.now().toString(),
@@ -83,6 +85,49 @@ function *getCommunityPosts(id, page) {
         postsObj.list = posts;
 
         return postsObj;
+    } else {
+        throw new Error(tmp.message);
+    }
+}
+
+function *getCommunityAdmins(id) {
+    var result = yield request({
+        url: 'http://www.im9.com/api/query.community.administrator.list.do?community_id=' + id + '&captcha=1c45ca043b7a5ac607a75b2eb9af81fa&ts=' + Date.now().toString(),
+        headers: {
+            'User-Agent': reference.userAgent
+        }
+    });
+
+    if (result.statusCode != 200)
+        throw new Error('Get HTTP ' + result.statusCode + ' error when getting community info');
+
+    var tmp = JSON.parse(result.body);
+    var adminsObj = {};
+
+    if (tmp.code === 0) {
+        var admins = [];
+        for (let i = 0; i < tmp.data.length; ++i) {
+            var obj = tmp.data[i];
+            admins.push({
+                username: obj.username,
+                uid: obj.member_id,
+                avatar: obj.apply_avatar,
+                role: obj.role_id
+            });
+        }
+        adminsObj.admins = admins;
+
+        var roles = [];
+        for (let i = 0; i < tmp.roles.length; ++i) {
+            var obj = tmp.roles[i];
+            roles.push({
+                id: obj.role_id,
+                name: obj.role_name
+            });
+        }
+        adminsObj.roles = roles;
+
+        return adminsObj;
     } else {
         throw new Error(tmp.message);
     }

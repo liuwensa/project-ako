@@ -4,5 +4,6 @@ exports = module.exports = {
     CidFetchingError: require('./cidfetch'),
     UserBlockedError: require('./userblocked'),
     VideoAccessError: require('./videoaccess'),
-    ContentEmptyException: require('./contentempty')
+    ContentEmptyException: require('./contentempty'),
+    InvaildPageException: require('./invaildpage')
 };

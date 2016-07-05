@@ -92,5 +92,40 @@ function *getUserVideos(uid) {
     }
 }
 
+function *getUserBangumis(uid, page) {
+    if (page && page < 1)
+        throw new exceptions.InvaildPageException();
+
+    var result = yield request({
+        url: 'http://space.bilibili.com/ajax/Bangumi/getList?mid=' + uid + '&page=' + page,
+        headers: {
+            'User-Agent': reference.userAgent
+        }
+    });
+
+    if (result.statusCode != 200)
+        throw new Error('Get HTTP ' + result.statusCode + ' error when getting user info');
+
+    var tmpObj = JSON.parse(result.body);
+    var userBangumiObj = {};
+
+    if (tmpObj.status) {
+        userBangumiObj.count = tmpObj.data.count;
+        userBangumiObj.pages = tmpObj.data.pages;
+
+        var list = [];
+        for (let i = 0; i < tmpObj.data.result.length; ++i) {
+            var obj = tmpObj.data.result[i];
+            list.push(+obj.season_id);
+        }
+        userBangumiObj.list = list;
+
+        return userBangumiObj;
+    } else {
+        throw new Error(tmpObj.data);
+    }
+}
+
 module.exports.info = getUserInformation;
 module.exports.video = getUserVideos;
+module.exports.bangumi = getUserBangumis;

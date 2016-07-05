@@ -137,6 +137,55 @@ describe('Project Ako Tests', function() {
         });
     });
 
+    it('Successfully getting user favourite bangumis information', function(done) {
+        request.get('/api/v0/user/2/bangumis').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.count > 0) return done();
+        });
+    });
+
+    it('Successfully getting user favourite bangumis information (with pages)', function(done) {
+        request.get('/api/v0/user/2/bangumis?page=2').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.list.length > 0) return done();
+        });
+    });
+
+    it('Successfully getting user favourite bangumis information when bangumis is empty', function(done) {
+        request.get('/api/v0/user/75174/bangumis').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.list.length === 0) return done();
+        });
+    });
+
+    it('Successfully getting user favourite bangumis information when page number out of range', function(done) {
+        request.get('/api/v0/user/2/bangumis?page=666').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.list.length === 0) return done();
+        });
+    });
+
+    it('Successfully(!?) getting user favourite bangumis information when user not found', function(done) {
+        request.get('/api/v0/user/0/bangumis').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 0 && res.body.data.list.length === 0) return done();
+        });
+    });
+
+    it('Failed getting user favourite bangumis information when uid is invaild', function(done) {
+        request.get('/api/v0/user/somebody/bangumis').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 500) return done();
+        });
+    });
+
+    it('Failed getting user favourite bangumis information when page number is invaild', function(done) {
+        request.get('/api/v0/user/2/bangumis?page=-1').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 406) return done();
+        });
+    });
+
     /* Bangumi */
     it('Successfully getting bangumi information', function(done) {
         request.get('/api/v0/bangumi/2600').expect(200).end(function(err, res) {
@@ -194,6 +243,13 @@ describe('Project Ako Tests', function() {
         });
     });
 
+    it('Failed getting bangumi sponsors information (with incorrect pages)', function(done) {
+        request.get('/api/v0/bangumi/5062/sponsors?page=-1').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 406) return done();
+        });
+    });
+
     /* Community */
     it('Successfully getting community information', function(done) {
         request.get('/api/v0/community/1063').expect(200).end(function(err, res) {
@@ -248,6 +304,13 @@ describe('Project Ako Tests', function() {
         request.get('/api/v0/community/test/posts').expect(200).end(function(err, res) {
             if (err) return done(err);
             if (res.body.code === 500 && res.body.message === '请求参数存在问题') return done();
+        });
+    });
+
+    it('Failed getting community posts when page number is invaild', function(done) {
+        request.get('/api/v0/community/1063/posts?page=-1').expect(200).end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.code === 406) return done();
         });
     });
 
