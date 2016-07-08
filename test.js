@@ -84,7 +84,7 @@ describe('Project Ako Tests', function() {
     it('Successfully getting user information', function(done) {
         request.get('/api/v0/user/4238316').expect(200).end(function(err, res) {
             if (err) return done(err);
-            if (res.body.code === 0 && res.body.data.uid === 4238316 && res.body.data.name === 'PL_朴莉') return done();
+            if (res.body.code === 0 && res.body.data.uid === 4238316 && res.body.data.name === '朴莉PrettyLily') return done();
         });
     });
 
