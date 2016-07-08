@@ -4,10 +4,26 @@ const request = require('co-request');
 const cheerio = require('cheerio');
 const moment = require('moment');
 
+const mongo = require('../mongo');
 const exceptions = require('../exceptions/');
 const reference = require('../reference');
 
 function *getVideoInformation(vid) {
+    var cacheObj = yield mongo.videos.findOne({vid: +vid});
+    if (cacheObj === null) {
+        return yield getVideoInformationFromRemote(vid);
+    } else {
+        let flag = moment(Date.now()).isAfter(cacheObj.db_update, 'day');
+        if (flag) {
+            yield mongo.videos.remove(cacheObj);
+            return yield getVideoInformationFromRemote(vid);
+        } else {
+            return cacheObj;
+        }
+    }
+}
+
+function *getVideoInformationFromRemote(vid) {
     var result1 = yield request({
         url: 'http://www.bilibili.com/video/av' + vid + '/',
         headers: {
@@ -41,10 +57,22 @@ function *getVideoInformation(vid) {
     if (plistElement.children().length > 0)
         videoObj.isMultipart = true;
 
-    var uid = $('div.f').attr('mid');
+    var uidRegex = /mid='(\d+)'/;
+    var uid_1 = $('div.f').attr('mid');
+    var uid_2 = '';
+    $('script').each(function(index, element) {
+        if (uid_2) return;
+        var elementHtml = $(element).html();
+        try {uid_2 = uidRegex.exec(elementHtml)[1];} catch (e) {}
+    });
+    var uid = uid_1 || uid_2;
     videoObj.uid = +uid;
     if (reference.blacklist.hasOwnProperty(uid))
         throw new exceptions.UserBlockedError(vid, uid, reference.blacklist[uid]);
+
+    var username_1 = $('a.name').text();
+    var username_2 = $('meta[name=\'author\']').attr('content');
+    videoObj.username = username_1 || username_2;
 
     var cidHtml = '';
     var cidRegex = /cid=(\d+)/;
@@ -113,11 +141,15 @@ function *getVideoInformation(vid) {
         for (let i = 0; i < tagInfo.data.length; ++i)
             tags.push(tagInfo.data[i].tag_name);
         videoObj.tags = tags;
+        videoObj.db_update = Date.now();
 
+        yield mongo.videos.insert(videoObj);
         return videoObj;
     } else if (tagInfo.code === 16006) {
         videoObj.tags = [];
+        videoObj.db_update = Date.now();
 
+        yield mongo.videos.insert(videoObj);
         return videoObj;
     } else {
         throw new Error('Get error code ' + tagInfo.code + ' when getting video info');

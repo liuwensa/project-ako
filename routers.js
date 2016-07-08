@@ -33,8 +33,8 @@ routerApi.get('/', function *(next) {
             blacklist: this.request.origin + '/api/v0/blacklists',
             video_info: this.request.origin + '/api/v0/video/{vid}',
             user_info: this.request.origin + '/api/v0/user/{uid}',
-            user_videos_info: this.request.origin + '/api/v0/user/{uid}/videos',
-            user_favourite_bangumis: this.request.origin + '/api/v0/user/{uid}/bangumis',
+            user_videos_info: this.request.origin + '/api/v0/user/{uid}/videos{?page={page number}}',
+            user_favourite_bangumis: this.request.origin + '/api/v0/user/{uid}/bangumis{?page={page number}}',
             bangumi_info: this.request.origin + '/api/v0/bangumi/{bangumi id}',
             bangumi_sponsors: this.request.origin + '/api/v0/bangumi/{bangumi id}/sponsors{?page={page number}&size={page size}}',
             community_info: this.request.origin + '/api/v0/community/{community id}',
@@ -97,7 +97,7 @@ routerApi.get('/user/:uid', function *(next) {
 
 routerApi.get('/user/:uid/videos', function *(next) {
     try {
-        let userVideoObj = yield userFetch.video(this.params.uid);
+        let userVideoObj = yield userFetch.video(this.params.uid, (this.request.query.page || 1));
         this.body = {code: 0,
             data: userVideoObj
         };

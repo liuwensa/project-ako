@@ -1,5 +1,31 @@
 'use strict';
 
+const moment = require('moment');
+const winston = require('winston');
+
+module.exports.logger = new winston.Logger({
+    transports: [
+        new winston.transports.Console({
+            colorize: true,
+            prettyPrint: true,
+            timestamp: function() {
+                return moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+            }
+        }),
+        new winston.transports.File({
+            filename: 'logs/' + moment(Date.now()).format('YYYY-MM-DD') + '.log',
+            json: false,
+            prettyPrint: true,
+            timestamp: function() {
+                return moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+            },
+            handleExceptions: true,
+            humanReadableUnhandledException: true,
+            exitOnError: false
+        })
+    ]
+});
+
 module.exports.userAgent = 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36';
 
 module.exports.blacklist = {
