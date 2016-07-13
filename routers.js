@@ -152,7 +152,7 @@ routerApi.get('/bangumi/:id', function *(next) {
 
 routerApi.get('/bangumi/:id/sponsors', function *(next) {
     try {
-        let sponsorObj = yield bangumiFetch.sponsors(this.params.id, this.request.query.page, this.request.query.size);
+        let sponsorObj = yield bangumiFetch.sponsors(this.params.id, this.request.query.page);
         this.body = {code: 0,
             data: sponsorObj
         };

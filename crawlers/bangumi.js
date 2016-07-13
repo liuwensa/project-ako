@@ -3,10 +3,41 @@
 const request = require('co-request');
 const cheerio = require('cheerio');
 
+const mongo = require('../mongo');
 const exceptions = require('../exceptions/');
 const reference = require('../reference');
 
 function *getBangumiInformation(id) {
+    var cacheObj = yield mongo.bangumiInfos.findOne({id: +id});
+    if (cacheObj === null) {
+        return yield getBangumiInformationFromRemote(id);
+    } else {
+        let flag = moment(Date.now()).isAfter(cacheObj.db_update, 'day');
+        if (flag) {
+            yield mongo.bangumiInfos.remove(cacheObj);
+            return yield getBangumiInformationFromRemote(id);
+        } else {
+            return cacheObj.data;
+        }
+    }
+}
+
+function *getBangumiSponsors(id) {
+    var cacheObj = yield mongo.bangumiSponsors.findOne({id: +id});
+    if (cacheObj === null) {
+        return yield getBangumiSponsorsFromRemote(id);
+    } else {
+        let flag = moment(Date.now()).isAfter(cacheObj.db_update, 'day');
+        if (flag) {
+            yield mongo.bangumiSponsors.remove(cacheObj);
+            return yield getBangumiSponsorsFromRemote(id);
+        } else {
+            return cacheObj.data;
+        }
+    }
+}
+
+function *getBangumiInformationFromRemote(id) {
     var result = yield request({
         url: 'http://bangumi.bilibili.com/anime/' + id,
         headers: {
@@ -42,18 +73,17 @@ function *getBangumiInformation(id) {
         tags.push(tagElements.eq(i).text());
     bangumiObj.tags = tags;
 
+    yield mongo.bangumiInfos.insert({id: +id, data: bangumiObj, db_update: Date.now()});
     return bangumiObj;
 }
 
-function *getBangumiSponsors(id, page, size) {
+function *getBangumiSponsorsFromRemote(id, page) {
     if (page && page < 1)
         throw new exceptions.InvaildPageException();
 
     var params = ['season_id=' + id];
     if (page && page > 0)
         params.push('page=' + page);
-    if (size && size > 0)
-        params.push('pagesize=' + size);
 
     var result = yield request({
         url: 'http://bangumi.bilibili.com/sponsor/rankweb/get_sponsor_total',

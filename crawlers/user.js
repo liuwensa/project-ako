@@ -17,7 +17,7 @@ function *getUserInformation(uid) {
             yield mongo.userInfos.remove(cacheObj);
             return yield getUserInformationFromRemote(uid);
         } else {
-            return cacheObj;
+            return cacheObj.data;
         }
     }
 }
@@ -31,6 +31,21 @@ function *getUserVideos(uid, page) {
         if (flag) {
             yield mongo.userVideos.remove(cacheObj);
             return yield getUserVideosFromRemote(uid, page);
+        } else {
+            return cacheObj.data;
+        }
+    }
+}
+
+function *getUserBangumis(uid, page) {
+    var cacheObj = yield mongo.userBangumis.findOne({uid: +uid, page: +page});
+    if (cacheObj === null) {
+        return yield getUserBangumisFromRemote(uid, page);
+    } else {
+        let flag = moment(Date.now()).isAfter(cacheObj.db_update, 'day');
+        if (flag) {
+            yield mongo.userBangumis.remove(cacheObj);
+            return yield getUserBangumisFromRemote(uid, page);
         } else {
             return cacheObj.data;
         }
@@ -88,8 +103,7 @@ function *getUserInformationFromRemote(uid) {
     if (tmpObj2.status) {
         var data = tmpObj2.data;
         userObj.tags = data[0].tags;
-        userObj.db_update = Date.now();
-        yield mongo.userInfos.insert(userObj);
+        yield mongo.userInfos.insert({uid: +uid, data: userObj, db_update: Date.now()});
         return userObj;
     } else {
         throw new Error(tmpObj2.data);
@@ -111,20 +125,14 @@ function *getUserVideosFromRemote(uid, page) {
         throw new Error('Get HTTP ' + result.statusCode + ' error when getting user info');
 
     var tmpObj = JSON.parse(result.body);
-    var userVideoObj = [];
+    var userVideoObj = {};
 
     if (tmpObj.status) {
+        userVideoObj.count = tmpObj.count;
+        userVideoObj.pages = tmpObj.pages;
+
         if (tmpObj.data.vlist) {
-            // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            userVideoObj = tmpObj.data.vlist;
+            userVideoObj.list = tmpObj.data.vlist;
             yield mongo.userVideos.insert({uid: +uid, page: +page, data: userVideoObj, db_update: Date.now()});
             return userVideoObj;
         } else {
@@ -135,7 +143,7 @@ function *getUserVideosFromRemote(uid, page) {
     }
 }
 
-function *getUserBangumis(uid, page) {
+function *getUserBangumisFromRemote(uid, page) {
     if (page && page < 1)
         throw new exceptions.InvaildPageException();
 
@@ -163,6 +171,7 @@ function *getUserBangumis(uid, page) {
         }
         userBangumiObj.list = list;
 
+        yield mongo.userBangumis.insert({uid: +uid, page: +page, data: userBangumiObj, db_update: Date.now()});
         return userBangumiObj;
     } else {
         throw new Error(tmpObj.data);

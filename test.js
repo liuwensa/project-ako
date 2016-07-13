@@ -215,20 +215,6 @@ describe('Project Ako Tests', function() {
         });
     });
 
-    it('Successfully getting bangumi sponsors information (with sizes)', function(done) {
-        request.get('/api/v0/bangumi/5062/sponsors?size=10').expect(200).end(function(err, res) {
-            if (err) return done(err);
-            if (res.body.code === 0 && res.body.data.list.length === 10) return done();
-        });
-    });
-
-    it('Successfully getting bangumi sponsors information (with pages and sizes)', function(done) {
-        request.get('/api/v0/bangumi/5062/sponsors?page=2&size=10').expect(200).end(function(err, res) {
-            if (err) return done(err);
-            if (res.body.code === 0 && res.body.data.list.length === 10) return done();
-        });
-    });
-
     it('Successfully getting bangumi sponsors information (empty)', function(done) {
         request.get('/api/v0/bangumi/2600/sponsors').expect(200).end(function(err, res) {
             if (err) return done(err);

@@ -18,7 +18,7 @@ function *getVideoInformation(vid) {
             yield mongo.videos.remove(cacheObj);
             return yield getVideoInformationFromRemote(vid);
         } else {
-            return cacheObj;
+            return cacheObj.data;
         }
     }
 }
@@ -141,15 +141,13 @@ function *getVideoInformationFromRemote(vid) {
         for (let i = 0; i < tagInfo.data.length; ++i)
             tags.push(tagInfo.data[i].tag_name);
         videoObj.tags = tags;
-        videoObj.db_update = Date.now();
 
-        yield mongo.videos.insert(videoObj);
+        yield mongo.videos.insert({vid: +vid, data: videoObj, db_update: Date.now()});
         return videoObj;
     } else if (tagInfo.code === 16006) {
         videoObj.tags = [];
-        videoObj.db_update = Date.now();
 
-        yield mongo.videos.insert(videoObj);
+        yield mongo.videos.insert({vid: +vid, data: videoObj, db_update: Date.now()});
         return videoObj;
     } else {
         throw new Error('Get error code ' + tagInfo.code + ' when getting video info');
