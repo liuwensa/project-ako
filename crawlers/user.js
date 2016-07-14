@@ -128,8 +128,8 @@ function *getUserVideosFromRemote(uid, page) {
     var userVideoObj = {};
 
     if (tmpObj.status) {
-        userVideoObj.count = tmpObj.count;
-        userVideoObj.pages = tmpObj.pages;
+        userVideoObj.count = tmpObj.data.count;
+        userVideoObj.pages = tmpObj.data.pages;
 
         if (tmpObj.data.vlist) {
             userVideoObj.list = tmpObj.data.vlist;

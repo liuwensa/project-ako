@@ -112,7 +112,7 @@ describe('Project Ako Tests', function() {
     it('Successfully getting user videos information', function(done) {
         request.get('/api/v0/user/153995/videos').expect(200).end(function(err, res) {
             if (err) return done(err);
-            if (res.body.code === 0 && res.body.data.length > 0) return done();
+            if (res.body.code === 0 && res.body.data.list.length > 0) return done();
         });
     });
 

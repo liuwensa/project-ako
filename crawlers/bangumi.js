@@ -2,6 +2,7 @@
 
 const request = require('co-request');
 const cheerio = require('cheerio');
+const moment = require('moment');
 
 const mongo = require('../mongo');
 const exceptions = require('../exceptions/');
@@ -22,15 +23,15 @@ function *getBangumiInformation(id) {
     }
 }
 
-function *getBangumiSponsors(id) {
-    var cacheObj = yield mongo.bangumiSponsors.findOne({id: +id});
+function *getBangumiSponsors(id, page) {
+    var cacheObj = yield mongo.bangumiSponsors.findOne({id: +id, page: +page});
     if (cacheObj === null) {
-        return yield getBangumiSponsorsFromRemote(id);
+        return yield getBangumiSponsorsFromRemote(id, page);
     } else {
         let flag = moment(Date.now()).isAfter(cacheObj.db_update, 'day');
         if (flag) {
             yield mongo.bangumiSponsors.remove(cacheObj);
-            return yield getBangumiSponsorsFromRemote(id);
+            return yield getBangumiSponsorsFromRemote(id, page);
         } else {
             return cacheObj.data;
         }
@@ -104,6 +105,7 @@ function *getBangumiSponsorsFromRemote(id, page) {
         sponsorObj.size = tmpObj.result.users;
         sponsorObj.list = tmpObj.result.list;
 
+        yield mongo.bangumiSponsors.insert({id: +id, page: +page, data: sponsorObj, db_update: Date.now()});
         return sponsorObj;
     } else {
         throw new Error(tmpObj.message);
