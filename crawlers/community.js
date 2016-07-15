@@ -1,11 +1,43 @@
 'use strict';
 
 const request = require('co-request');
+const moment = require('moment');
 
+const mongo = require('../mongo');
 const exceptions = require('../exceptions/');
 const reference = require('../reference');
 
 function *getCommunityInformation(id) {
+    var cacheObj = yield mongo.communityInfos.findOne({id: +id});
+    if (cacheObj === null) {
+        return yield getCommunityInformationFromRemote(id);
+    } else {
+        let flag = moment(Date.now()).isAfter(cacheObj.db_update, 'day');
+        if (flag) {
+            yield mongo.communityInfos.remove(cacheObj);
+            return yield getCommunityInformationFromRemote(id);
+        } else {
+            return cacheObj.data;
+        }
+    }
+}
+
+function *getCommunityPosts(id, page) {
+    var cacheObj = yield mongo.communityPosts.findOne({id: +id, page: +page});
+    if (cacheObj === null) {
+        return yield getCommunityPostsFromRemote(id, page);
+    } else {
+        let flag = moment(Date.now()).isAfter(cacheObj.db_update, 'day');
+        if (flag) {
+            yield mongo.communityPosts.remove(cacheObj);
+            return yield getCommunityPostsFromRemote(id, page);
+        } else {
+            return cacheObj.data;
+        }
+    }
+}
+
+function *getCommunityInformationFromRemote(id) {
     var result = yield request({
         url: 'http://www.im9.com/api/query.detail.community.do?community_id=' + id + '&captcha=1c45ca043b7a5ac607a75b2eb9af81fa&ts=' + Date.now().toString(),
         headers: {
@@ -29,13 +61,14 @@ function *getCommunityInformation(id) {
         commObj.member = {count: tmp.data.member_count, nickname: tmp.data.member_nickname};
         commObj.admin = yield getCommunityAdmins(id);
 
+        yield mongo.communityInfos.insert({id: +id, data: commObj, db_update: Date.now()});
         return commObj;
     } else {
         throw new Error(tmp.message);
     }
 }
 
-function *getCommunityPosts(id, page) {
+function *getCommunityPostsFromRemote(id, page) {
     if (page && page < 1)
         throw new exceptions.InvaildPageException();
 
@@ -84,6 +117,7 @@ function *getCommunityPosts(id, page) {
         }
         postsObj.list = posts;
 
+        yield mongo.communityPosts.insert({id: +id, data: postsObj, db_update: Date.now()});
         return postsObj;
     } else {
         throw new Error(tmp.message);
@@ -91,6 +125,21 @@ function *getCommunityPosts(id, page) {
 }
 
 function *getCommunityAdmins(id) {
+    var cacheObj = yield mongo.communityAdmins.findOne({id: +id});
+    if (cacheObj === null) {
+        return yield getCommunityAdminsFromRemote(id);
+    } else {
+        let flag = moment(Date.now()).isAfter(cacheObj.db_update, 'day');
+        if (flag) {
+            yield mongo.communityAdmins.remove(cacheObj);
+            return yield getCommunityAdminsFromRemote(id);
+        } else {
+            return cacheObj.data;
+        }
+    }
+}
+
+function *getCommunityAdminsFromRemote(id) {
     var result = yield request({
         url: 'http://www.im9.com/api/query.community.administrator.list.do?community_id=' + id + '&captcha=1c45ca043b7a5ac607a75b2eb9af81fa&ts=' + Date.now().toString(),
         headers: {
@@ -127,6 +176,7 @@ function *getCommunityAdmins(id) {
         }
         adminsObj.roles = roles;
 
+        yield mongo.communityAdmins.insert({id: +id, data: adminsObj, db_update: Date.now()});
         return adminsObj;
     } else {
         throw new Error(tmp.message);
