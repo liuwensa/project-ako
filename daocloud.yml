@@ -1,0 +1,11 @@
+image: node:4.4
+
+services:
+  - mongodb
+
+env:
+  - PORT = "80"
+
+script:
+  - npm install
+  - node ./main.js
