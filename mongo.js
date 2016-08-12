@@ -5,7 +5,8 @@ const wrap = require('co-monk');
 
 let mongoIp = process.env.MONGODB_IP || process.env.OPENSHIFT_MONGODB_DB_HOST || 'localhost';
 let mongoPort = process.env.MONGODB_PORT || process.env.OPENSHIFT_MONGODB_DB_PORT || 27017;
-const db = monk(mongoIp + ':' + mongoPort + '/projAko');
+let mongoConn = process.env.MONGODB_CONNECTION || mongoIp + ':' + mongoPort + '/projAko';
+const db = monk(mongoConn);
 
 module.exports.videos = wrap(db.get('videos'));
 module.exports.userInfos = wrap(db.get('userInfos'));

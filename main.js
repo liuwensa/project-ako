@@ -40,12 +40,12 @@ app.use(function *(next) {
 /**
  * Static assets
  */
-app.use(koaStatic(__dirname + '/static', {defer: true}));
+//app.use(koaStatic(__dirname + '/static', {defer: true}));
 
 /**
  * Routers
  */
-app.use(routerMain.routes()).use(routerMain.allowedMethods());
+//app.use(routerMain.routes()).use(routerMain.allowedMethods());
 app.use(routerApi.routes()).use(routerApi.allowedMethods());
 
 /**
