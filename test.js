@@ -7,9 +7,9 @@ describe('Project Ako Tests', function() {
     this.timeout(30000);
 
     /* Main Site */
-    it('200 to /', function(done) {
+    /* it('200 to /', function(done) {
         request.get('/').expect(200, done);
-    });
+    }); */
 
     /* API */
     it('API Links is OK', function(done) {
