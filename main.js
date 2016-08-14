@@ -34,7 +34,7 @@ app.use(function *(next) {
     yield next;
     let ms = new Date() - start;
     //console.log('%s %s - %s', this.method, this.url, ms);
-    logger.info(this.method + ' ' + this.url + ' - ' + this.status + ' ' + ms + 'ms');
+    logger.info(this.method + ' ' + this.url + ' - ' + this.status + ' ' + ms + 'ms - ' + this.request.header['user-agent']);
 });
 
 /**
