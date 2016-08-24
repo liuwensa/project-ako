@@ -11,7 +11,7 @@
   "license": "ISC",
   "private": true,
   "dependencies": {
-    "cheerio": "^0.20.0",
+    "cheerio": "^0.22.0",
     "co-monk": "^1.0.0",
     "co-request": "^1.0.0",
     "co-views": "^2.1.0",
