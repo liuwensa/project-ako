@@ -117,7 +117,7 @@ describe('Project Ako Tests', function() {
     });
 
     it('Failed getting user videos information when videos is empty', function(done) {
-        request.get('/api/v0/user/4238316/videos').expect(200).end(function(err, res) {
+        request.get('/api/v0/user/2711526/videos').expect(200).end(function(err, res) {
             if (err) return done(err);
             if (res.body.code === 205) return done();
         });

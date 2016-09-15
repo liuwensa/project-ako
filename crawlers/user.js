@@ -54,10 +54,14 @@ function *getUserBangumis(uid, page) {
 
 function *getUserInformationFromRemote(uid) {
     var result1 = yield request({
-        url: 'http://space.bilibili.com/ajax/member/GetInfo?mid=' + uid,
+        url: 'http://space.bilibili.com/ajax/member/GetInfo',
+        method: 'POST',
         headers: {
-            'User-Agent': reference.userAgent
-        }
+            'User-Agent': reference.userAgent,
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Referer': 'http://space.bilibili.com/' + uid
+        },
+        form: 'mid=' + uid + '&_=' + Date.now().toString()
     });
 
     if (result1.statusCode != 200)
