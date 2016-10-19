@@ -25,6 +25,6 @@
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "supertest": "^1.2.0"
+    "supertest": "^2.0.1"
   }
 }
