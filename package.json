@@ -20,7 +20,7 @@
     "koa-router": "^5.4.0",
     "koa-static": "^2.0.0",
     "mkdirp": "^0.5.1",
-    "moment": "^2.13.0",
+    "moment": "^2.16.0",
     "monk": "^3.0.4",
     "winston": "^2.2.0"
   },
